@@ -1,8 +1,10 @@
 const app = () => {
+    
     const song = document.querySelector('.song')
     const play = document.querySelector('.play')
     const outline = document.querySelector('.moving-outline circle')
     const video = document.querySelector('.vid-container video')
+    const buttons = document.querySelectorAll('button')
 
     // Sounds
     const sounds = document.querySelectorAll('.sound-picker button')
@@ -17,6 +19,7 @@ const app = () => {
     // Duration
     let fakeDuration = 600
 
+    // Player animator properties
     outline.style.strokeDasharray = outlineLength
     outline.style.strokeDashoffset = outlineLength
 
@@ -25,7 +28,8 @@ const app = () => {
         sound.addEventListener('click', function(){
             song.src = this.getAttribute('data-sound')
             video.src = this.getAttribute('data-video')
-            checkPlaying(song)
+            // checkPlaying(song)
+            timeDisplay.textContent = "00:00"
         })
     })
 
@@ -34,7 +38,7 @@ const app = () => {
         checkPlaying(song)
     })
 
-    // Select Sound
+    // Select Duration
     timeSelect.forEach(option => {
         option.addEventListener('click', function(){
             fakeDuration = this.getAttribute("data-time")
@@ -50,12 +54,22 @@ const app = () => {
             song.play()
             video.play()
             play.src = "svg/pause.svg"
+            buttons.forEach((button)=>
+            {
+                button.style.opacity = "0%"
+                button.style.pointerEvents = "none"
+            })
         }
         else
         {
             song.pause()
             video.pause()
             play.src = "svg/play.svg"
+            buttons.forEach((button)=>
+            {
+                button.style.opacity = "100%"
+                button.style.pointerEvents = "auto"
+            })
         }
     }
 
@@ -71,7 +85,10 @@ const app = () => {
         outline.style.strokeDashoffset = progress
 
         // Animate the Timer
-        timeDisplay.textContent = `${minutes}:${seconds}`
+        if(!song.paused)
+        {
+            timeDisplay.textContent = `${minutes}:${seconds}`
+        }
 
         if(currentTime>=fakeDuration)
         {
